@@ -3,10 +3,6 @@
 #include <sstream>
 #include <string>
 
-const int MAX_RED = 12;
-const int MAX_GREEN = 13;
-const int MAX_BLUE = 14;
-
 int main() {
     std::ifstream file("input.txt"); // replace with your file name
     if (!file) {
@@ -16,23 +12,22 @@ int main() {
 
     int sum = 0;
 
-    int is_possible = 1;
     std::string line;
+
     //for each line in the input file
     while (std::getline(file, line)) {
         std::istringstream iss(line);
 
         std::string token;
         std::getline(iss, token, ':');
-        int id = std::stoi(token.substr(5));
-        //std::cout << id << std::endl << std::endl;
-
         std::getline(iss, token, ':');
         std::string game = token;
 
         std::istringstream iss_game(game);
 
-        while (std::getline(iss_game, token, ';') && is_possible) {
+        int least_red = 0, least_green = 0, least_blue = 0;
+
+        while (std::getline(iss_game, token, ';')) {
             std::istringstream iss_set(token);
             std::string set;
 
@@ -48,23 +43,18 @@ int main() {
                 std::string color;
                 std::getline(iss_balls, color, ' ');
 
-                if (
-                    color == "red" && count > MAX_RED ||
-                    color == "green" && count > MAX_GREEN ||
-                    color == "blue" && count > MAX_BLUE
-                ) {
-                    is_possible = 0;
-                    break;
+                if (color == "red" && count > least_red) {
+                    least_red = count;
+                }
+                if (color == "green" && count > least_green) {
+                    least_green = count;
+                }
+                if (color == "blue" && count > least_blue) {
+                    least_blue = count;
                 }
             }
         }
-
-        if (is_possible) {
-            sum += id;
-        }
-        else {
-            is_possible = 1;
-        } 
+        sum += (least_red * least_blue * least_green);
     }
 
     std::cout << sum << std::endl;
