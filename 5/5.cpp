@@ -21,7 +21,6 @@ int main() {
     std::string seed;
     std::getline(iss1, seed, ' ');
     while(std::getline(iss1, seed, ' ')) {
-        std::cout << seed << std::endl;
         seeds.push_back(std::stol(seed));
     }
 
@@ -40,11 +39,30 @@ int main() {
             mappings[mapIdx].push_back(std::stol(num));
         }
         else if (std::isalpha(line[0])) {
-            stdA::asdfkkkj
+            std::vector<long> newmap;
+            mappings.push_back(newmap);
             mapIdx += 1;
         }
-        std::cout << line << std::endl;
     }
+
+    for (int i = 0; i < seeds.size(); i++) {
+        for (int j = 0; j < mappings.size(); j++) {
+            for (int k = 0; k < mappings[j].size(); k += 3) {
+                if (seeds[i] >= mappings[j][k+1] && seeds[i] <= (mappings[j][k+1] + mappings[j][k+2])) { //src is in range
+                    seeds[i] = mappings[j][k] + (seeds[i] - mappings[j][k+1]);
+                    break;
+                    // if (i == 0) {std::cout << j << " " << k/3 << std::endl;}
+                }
+            }
+        }
+    }
+
+    long min_dest = __LONG_MAX__;
+    for (long seed : seeds) {
+        min_dest = std::min(min_dest, seed);
+    }
+
+    std::cout << min_dest << std::endl;
 
     file.close();
     return 0;
