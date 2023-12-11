@@ -6,10 +6,14 @@
 #include <unordered_map>
 
 std::unordered_map<std::string, std::vector<int>> map;
+std::vector<std::pair<int, int>> gears;
 
 int is_symbol(int i, int j, const std::vector<std::string>& schem) {
     if (schem[i][j] == '*') {
-        return 2;
+        std::pair<int, int> p;
+        p.first = i;
+        p.second = j;
+        gears.push_back(p);
     }
 
     if (!std::isdigit(schem[i][j]) && schem[i][j] != '.') {
@@ -20,23 +24,25 @@ int is_symbol(int i, int j, const std::vector<std::string>& schem) {
 
 int is_digit_adjacent(int i, int j, const std::vector<std::string>& schem) {
 
-    if (i < schem.size()-1 && is_symbol(i+1, j, schem)) { is_symbol(i+1, j, schem); }
+    int resp = 0;
 
-    if (i > 0 && is_symbol(i-1, j, schem)) { is_symbol(i-1, j, schem); }
+    if (i < schem.size()-1 && is_symbol(i+1, j, schem)) { resp = 1; }
 
-    if (j < schem[0].length()-1 && is_symbol(i, j+1, schem)) { is_symbol(i, j+1, schem); }
+    if (i > 0 && is_symbol(i-1, j, schem)) { resp = 1; }
 
-    if (j > 0 && is_symbol(i, j-1, schem)) { is_symbol(i, j-1, schem); }
+    if (j < schem[0].length()-1 && is_symbol(i, j+1, schem)) { resp = 1; }
 
-    if (i < schem.size()-1 && j < schem[0].length()-1 && is_symbol(i+1, j+1, schem)) { is_symbol(i+1, j+1, schem); }
+    if (j > 0 && is_symbol(i, j-1, schem)) { resp = 1; }
 
-    if (i > 0 && j < schem[0].length()-1 && is_symbol(i-1, j+1, schem)) { is_symbol(i-1, j+1, schem); }
+    if (i < schem.size()-1 && j < schem[0].length()-1 && is_symbol(i+1, j+1, schem)) { resp = 1; }
 
-    if (i < schem.size()-1 && j > 0 && is_symbol(i+1, j-1, schem)) { is_symbol(i+1, j-1, schem); }
+    if (i > 0 && j < schem[0].length()-1 && is_symbol(i-1, j+1, schem)) { resp = 1; }
 
-    if (i > 0 && j > 0 && is_symbol(i-1, j-1, schem)) { is_symbol(i-1, j-1, schem); }
+    if (i < schem.size()-1 && j > 0 && is_symbol(i+1, j-1, schem)) { resp = 1; }
 
-    return 0;
+    if (i > 0 && j > 0 && is_symbol(i-1, j-1, schem)) { resp = 1; }
+
+    return resp;
 }
 
 int main() {
@@ -51,13 +57,12 @@ int main() {
     std::string line;
     while (std::getline(file, line)) {
         schem.push_back(line);
-    }
+}
 
     int sum = 0;
 
     int building_num = 0;
     int is_adjacent = 0;
-    int is_gear = 0;
     int num = 0;
 
     for (int i = 0; i < schem.size(); i++) {
@@ -65,22 +70,22 @@ int main() {
             if (std::isdigit(schem[i][j])) {
                 if (!building_num) { building_num = 1; }
 
-                int adj_resp = is_digit_adjacent(i, j, schem);
-                if (!is_adjacent && adj_resp) {
+                if (!is_adjacent && is_digit_adjacent(i, j, schem)) {
                     is_adjacent = 1;
-                }
-                if (adj_resp == 2) {
-                    is_gear = 1;
                 }
                 num = num * 10 + (schem[i][j] - '0');
             }
             else if (building_num) {
-                if (is_adjacent) { sum += num; }
+                if (is_adjacent) {
+                    sum += num;
 
-                if (is_gear) {
-
+                    for (auto& g : gears) {
+                        std::string k = std::to_string(g.first) + "," + std::to_string(g.second);
+                        map[k].push_back(num);
+                    }
                 }
-                
+
+                gears.clear();
                 num = 0;
                 is_adjacent = 0;
                 building_num = 0;
@@ -88,6 +93,17 @@ int main() {
         }
     }
 
+    std::cout << sum << std::endl;
+
+    sum = 0;
+    for (auto& pair : map) {
+        if (pair.second.size() == 2) {
+            sum += (pair.second[0] * pair.second[1]);
+        }
+        else if (pair.second.size() > 2) {
+            std::cout << pair.first << std::endl;
+        }
+    }
     std::cout << sum << std::endl;
 
     file.close();
