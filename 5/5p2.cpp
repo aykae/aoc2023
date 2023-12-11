@@ -47,18 +47,26 @@ int main() {
 
     long min_dest = __LONG_MAX__;
 
-    for (int i = 0; i < seeds.size(); i++) {
-        long curr = seeds[i];
-        for (int j = 0; j < mappings.size(); j++) {
-            for (int k = 0; k < mappings[j].size(); k+=3) {
-                if (seeds[i] >= mappings[j][k+1] && seeds[i] <= (mappings[j][k+1] + mappings[j][k+2])) { //src is in range
-                    seeds[i] = mappings[j][k] + (seeds[i] - mappings[j][k+1]);
-                    break;
-                }
-            }
-        }
-        min_dest = std::min(min_dest, seeds[i]);
-    }
+    //TODO: work backwards from location ranges
+
+    // for (int i = 0; i < seeds.size(); i+=2) {
+    //     for (int offset = 0; offset < seeds[i+1]; offset++){ // seed ranges
+    //         long curr = seeds[i] + offset;
+    //         for (int j = 0; j < mappings.size(); j++) {
+    //             for (int k = 0; k < mappings[j].size(); k+=3) {
+    //                 if (curr >= mappings[j][k+1] && curr <= (mappings[j][k+1] + mappings[j][k+2])) { //src is in range
+    //                     curr = mappings[j][k] + (curr - mappings[j][k+1]);
+    //                     break;
+    //                     // if (i == 0) {std::cout << j << " " << k/3 << std::endl;}
+    //                 }
+    //             }
+    //         }
+    //         min_dest = std::min(min_dest, curr);
+
+    //         //optimize by only testing smallest of seed to seed+range values (actually dont think so)
+    //         //or just work backwards
+    //     }
+    // }
 
     std::cout << min_dest << std::endl;
 
