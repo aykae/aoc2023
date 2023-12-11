@@ -13,8 +13,10 @@ int main() {
     }
 
     int sum = 0;
+    int cardnum = 1;
     std::string line;
     std::unordered_map<std::string, int> cardmap;
+    std::unordered_map<std::string, int> copymap;
     while (std::getline(file, line)) {
         std::istringstream iss1(line);
 
@@ -60,10 +62,17 @@ int main() {
             }
         }
 
-        if (score) {
-            sum += std::pow(2, score-1);
+        // if (score) {
+        //     sum += std::pow(2, score-1);
+        // }
+        int currCopies = copymap[std::to_string(cardnum)] + 1;
+        sum += currCopies;
+        for (int i = 1; i <= score; i++) {
+            copymap[std::to_string(cardnum + i)] += currCopies;
         }
+
         cardmap.clear();
+        cardnum += 1;
     }
 
     std::cout << sum << std::endl;
