@@ -52,24 +52,39 @@ int main() {
     //      2. set new lower_bound to new_src+(lowest_dest-prev_src) and upper_bound to new_src + new_range
 
     long min_dest = __LONG_MAX__;
-    long lower = 0;
-    long upper = 0;
+    // long lower = 0;
+    for (int k = 0; k < mappings[mappings.size()-1].size(); k+=3) {
+    long lower = mappings[mappings.size()-1][k];
+    // long upper = 0;
+    long upper = lower;
     int convcount = 0;
     for (int i = mappings.size()-1; i >= 0; i--) {
-        long min_dest = __LONG_MAX__;
+        // long min_dest = __LONG_MAX__;
         for (int j = 0; j < mappings[i].size(); j+=3) {
-            if (mappings[i][j] < min_dest && mappings[i][j] >= lower && mappings[i][j] <= upper) {
-                min_dest = mappings[i][j];
-                lower = mappings[i][j+1] + (min_dest-lower);
+            // if (mappings[i][j] < min_dest && mappings[i][j] >= lower && mappings[i][j] <= upper) {
+            if (mappings[i][j] >= lower && mappings[i][j] <= upper) {
+                // min_dest = mappings[i][j];
+                // lower = mappings[i][j+1] + (mappings[i][j]-lower);
+                lower = mappings[i][j+1];
                 upper = mappings[i][j+1] + mappings[i][j+2];
                 convcount += 1;
                 break;
             }
         }
     }
-
     std::cout << lower << std::endl;
     std::cout << convcount << std::endl;
+
+    if (convcount == mappings.size()-1) {
+        for (int s = 0; s < seeds.size(); s+=2){
+            if (seeds[s] >= lower && seeds[s] <= upper) {
+                std::cout << seeds[s] << std::endl;
+            }
+        }
+    }
+
+    }
+
 
     file.close();
     return 0;
