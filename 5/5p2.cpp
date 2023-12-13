@@ -51,39 +51,65 @@ int main() {
     //      1. find lowest dest that is geq (lower_bound) prev src and (upper_bound) leq src+range
     //      2. set new lower_bound to new_src+(lowest_dest-prev_src) and upper_bound to new_src + new_range
 
-    long min_dest = __LONG_MAX__;
-    // long lower = 0;
+    std::vector<long> candidate_seeds;
     for (int k = 0; k < mappings[mappings.size()-1].size(); k+=3) {
-    long lower = mappings[mappings.size()-1][k];
-    // long upper = 0;
-    long upper = lower;
-    int convcount = 0;
-    for (int i = mappings.size()-1; i >= 0; i--) {
-        // long min_dest = __LONG_MAX__;
-        for (int j = 0; j < mappings[i].size(); j+=3) {
-            // if (mappings[i][j] < min_dest && mappings[i][j] >= lower && mappings[i][j] <= upper) {
-            if (mappings[i][j] >= lower && mappings[i][j] <= upper) {
-                // min_dest = mappings[i][j];
-                // lower = mappings[i][j+1] + (mappings[i][j]-lower);
-                lower = mappings[i][j+1];
-                upper = mappings[i][j+1] + mappings[i][j+2];
-                convcount += 1;
-                break;
+        long lower = mappings[mappings.size()-1][k];
+        // long upper = 0;
+        long upper = lower;
+        int convcount = 0;
+        for (int i = mappings.size()-1; i >= 0; i--) {
+            // long min_dest = __LONG_MAX__;
+            for (int j = 0; j < mappings[i].size(); j+=3) {
+                // if (mappings[i][j] < min_dest && mappings[i][j] >= lower && mappings[i][j] <= upper) {
+                if (lower >= mappings[i][j] && lower <= mappings[i][j] + mappings[i][j+2]) {
+                    // min_dest = mappings[i][j];
+                    lower = mappings[i][j+1] + (lower-mappings[i][j]);
+                    upper = mappings[i][j+1] + mappings[i][j+2];
+                    convcount += 1;
+                    break;
+                }
+                else if (upper >= mappings[i][j] && upper <= mappings[i][j] + mappings[i][j+2]) {
+                    lower = mappings[i][j+1];
+                    upper = mappings[i][j+1] + (upper-mappings[i][j]);
+                    convcount += 1;
+                    break;
+                }
             }
         }
-    }
-    std::cout << lower << std::endl;
-    std::cout << convcount << std::endl;
-
-    if (convcount == mappings.size()-1) {
+        std::cout << k/3 << std::endl;
+        std::cout << lower << std::endl;
         for (int s = 0; s < seeds.size(); s+=2){
-            if (seeds[s] >= lower && seeds[s] <= upper) {
-                std::cout << seeds[s] << std::endl;
+            if (lower >= seeds[s] && lower <= seeds[s] + seeds[s+1]) {
+                candidate_seeds.push_back(lower);
+                std::cout << lower << std::endl; //find seed
+            }
+            else if (upper >= seeds[s] && upper <= seeds[s] + seeds[s+1]) {
+                candidate_seeds.push_back(seeds[s]);
+                std::cout << upper << std::endl; //find seed
             }
         }
+        std::cout << convcount << "\n" << std::endl;
     }
 
+    //convert candidate seeds back into locations
+    seeds.clear();
+    seeds = candidate_seeds;
+    // seeds.push_back(2668361194);
+    long min_dest = __LONG_MAX__;
+    for (int i = 0; i < seeds.size(); i++) {
+        long curr = seeds[i];
+        for (int j = 0; j < mappings.size(); j++) {
+            for (int k = 0; k < mappings[j].size(); k+=3) {
+                if (seeds[i] >= mappings[j][k+1] && seeds[i] <= (mappings[j][k+1] + mappings[j][k+2])) { //src is in range
+                    seeds[i] = mappings[j][k] + (seeds[i] - mappings[j][k+1]);
+                    break;
+                }
+            }
+        }
+        min_dest = std::min(min_dest, seeds[i]);
     }
+
+    std::cout << min_dest << std::endl;
 
 
     file.close();
