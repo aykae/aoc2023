@@ -45,30 +45,40 @@ int main() {
         }
     }
 
-    long min_dest = __LONG_MAX__;
-
     //TODO: work backwards from location ranges
+    // 1. iterate through mappings, bottom up
+    //      1. find lowest dest that is geq (lower_bound) prev src and (upper_bound) leq src+range
+    //      2. set new lower_bound to new_src+(lowest_dest-prev_src) and upper_bound to new_src + new_range
+    long lower;
+    long upper;
+    long convcount;
+    long min_dest = __LONG_MAX__;
+    for (int k = 0; k < mappings[mappings.size()-1].size(); k+=3) {
+        std::vector<long> map = mappings[mappings.size()-1];
+        lower = map[k+1];
+        upper = map[k+1] + map[k+2];
+        convcount = 0;
+        for (int i = mappings.size()-2; i >= 0; i--) {
+            long min_dest = __LONG_MAX__;
+            int min_idx = -1;
+            for (int j = 0; j < mappings[i].size(); j+=3) {
+                if (mappings[i][j] < min_dest && mappings[i][j] >= lower && mappings[i][j] <= upper) {
+                    min_dest = mappings[i][j];
+                    min_idx = j;
+                    convcount += 1;
+                    break;
+                }
+            }
+            lower = mappings[i][min_idx+1] + (min_dest-lower);
+            upper = mappings[i][min_idx+1] + mappings[i][min_idx+2];
+        }
+        if (convcount == mappings.size()-1) {
+            std::cout << k/3 << ": " << lower << std::endl;
+        }
+    }
 
-    // for (int i = 0; i < seeds.size(); i+=2) {
-    //     for (int offset = 0; offset < seeds[i+1]; offset++){ // seed ranges
-    //         long curr = seeds[i] + offset;
-    //         for (int j = 0; j < mappings.size(); j++) {
-    //             for (int k = 0; k < mappings[j].size(); k+=3) {
-    //                 if (curr >= mappings[j][k+1] && curr <= (mappings[j][k+1] + mappings[j][k+2])) { //src is in range
-    //                     curr = mappings[j][k] + (curr - mappings[j][k+1]);
-    //                     break;
-    //                     // if (i == 0) {std::cout << j << " " << k/3 << std::endl;}
-    //                 }
-    //             }
-    //         }
-    //         min_dest = std::min(min_dest, curr);
-
-    //         //optimize by only testing smallest of seed to seed+range values (actually dont think so)
-    //         //or just work backwards
-    //     }
-    // }
-
-    std::cout << min_dest << std::endl;
+    std::cout << lower << std::endl;
+    std::cout << convcount << std::endl;
 
     file.close();
     return 0;
