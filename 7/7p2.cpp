@@ -6,13 +6,19 @@
 #include <sstream>
 #include <unordered_map>
 
-const std::string STRENGTH = "AKQJT98765432";
+const std::string STRENGTH = "AKQT98765432J";
 
 std::vector<std::pair<char, int>>* sort_counts(const std::string &hand) {
     std::unordered_map<char, int> card_counts;
     for (char c : hand) {
         card_counts[c] += 1;
     }
+
+    int j_count = card_counts['J'];
+    card_counts['J'] = 0;
+    // if (j_count > 0 && j_count < 5) {
+    //     card_counts.erase('J');
+    // }
 
     std::vector<std::pair<char, int>>* ordered_counts;
     ordered_counts = new std::vector<std::pair<char, int>>(card_counts.begin(), card_counts.end());
@@ -25,6 +31,8 @@ std::vector<std::pair<char, int>>* sort_counts(const std::string &hand) {
             return STRENGTH.find(a.first) < STRENGTH.find(b.first);
         }
     });
+
+    ordered_counts->at(0).second += j_count;
 
     return ordered_counts;
 }
