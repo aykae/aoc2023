@@ -33,12 +33,13 @@ int main() {
         map[line.substr(0, 3)] = p;
     }
 
+    std::vector<int> steps(nodes.size(), 0);
+
     // TODO: find least common multiple (multiply all node di's together) of all ways to reach z 
-    int all_zs = 0;
+    int found_zs = 0;
     int di = 0;
-    while (!all_zs) {
+    while (found_zs < nodes.size()) {
         char dir = dirs[di % dirs.length()];
-        all_zs = 1;
         for (int i = 0; i < nodes.size(); i++) {
             if (dir == 'L') {
                 nodes[i] = map[nodes[i]].first;
@@ -47,11 +48,9 @@ int main() {
                 nodes[i] = map[nodes[i]].second;
             }
 
-            if (nodes[i][2] != 'Z') {
-                 all_zs = 0;
-            }
-            else {
-                std::cout << nodes[i] << std::endl;
+            if (nodes[i][2] == 'Z' && !steps[i]) {
+                steps[i] = di;
+                found_zs++;
             }
         }
         di++;
