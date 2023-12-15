@@ -5,6 +5,19 @@
 #include <unordered_map>
 #include <vector>
 
+long gcd(long a, long b) {
+    while (b != 0) {
+        long t = b;
+        b = a % b;
+        a = t;
+    }
+    return a;
+}
+
+long lcm(long a, long b) {
+    return (a * b) / gcd(a, b);
+}
+
 int main() {
     std::ifstream file("input.txt"); // replace with your file name
     if (!file) {
@@ -50,13 +63,23 @@ int main() {
 
             if (nodes[i][2] == 'Z' && !steps[i]) {
                 steps[i] = di;
-                found_zs++;
+                std::cout << nodes[i] << ": " << steps[i] << std::endl;
+            }
+            else if (nodes[i][2] == 'Z' && steps[i]) {
+                steps[i] = di - steps[i];
+                found_zs += 1;
+                std::cout << nodes[i] << ": " << steps[i] << std::endl;
             }
         }
         di++;
     }
 
-    std::cout << di << std::endl;
+    long temp = steps[0];
+    for (int i = 0; i < steps.size()-1; i++) {
+        temp = lcm(temp, steps[i+1]);
+    }
+
+    std::cout << temp << std::endl;
 
     file.close();
     return 0;
