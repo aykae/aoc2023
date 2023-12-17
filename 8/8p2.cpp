@@ -63,6 +63,7 @@ int main() {
 
             if (nodes[i][2] == 'Z') {
                 steps[i] = di - steps[i];
+                // steps[i] = di;
                 // std::cout << nodes[i] << ": " << steps[i] << " " << steps[i] / dirs.length() << std::endl;
                 std::cout << nodes[i] << ": " << steps[i] << " " << static_cast<float>(steps[i]) / dirs.length() << std::endl;
                 if (steps[i] % dirs.length() == 0) {
