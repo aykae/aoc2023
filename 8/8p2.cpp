@@ -61,25 +61,35 @@ int main() {
                 nodes[i] = map[nodes[i]].second;
             }
 
-            if (nodes[i][2] == 'Z' && !steps[i]) {
-                steps[i] = di;
-                std::cout << nodes[i] << ": " << steps[i] << std::endl;
-            }
-            else if (nodes[i][2] == 'Z' && steps[i]) {
+            if (nodes[i][2] == 'Z') {
                 steps[i] = di - steps[i];
-                found_zs += 1;
-                std::cout << nodes[i] << ": " << steps[i] << std::endl;
+                // std::cout << nodes[i] << ": " << steps[i] << " " << steps[i] / dirs.length() << std::endl;
+                std::cout << nodes[i] << ": " << steps[i] << " " << static_cast<float>(steps[i]) / dirs.length() << std::endl;
+                if (steps[i] % dirs.length() == 0) {
+                    found_zs += 1;
+                }
             }
+            // else if (nodes[i][2] == 'Z' && steps[i]) {
+            //     steps[i] = di - steps[i];
+            //     found_zs += 1;
+            //     // std::cout << nodes[i] << ": " << steps[i] << " " << steps[i] / dirs.length() << std::endl;
+            //     std::cout << nodes[i] << ": " << steps[i] << " " << static_cast<float>(steps[i]) / dirs.length() << std::endl;
+            // }
         }
         di++;
     }
 
     long temp = steps[0];
+    long long sum = 1;
     for (int i = 0; i < steps.size()-1; i++) {
         temp = lcm(temp, steps[i+1]);
+        sum *= steps[i];
     }
 
-    std::cout << temp << std::endl;
+    std::cout << "\n" << temp << std::endl;
+    std::cout << sum << std::endl;
+    std::cout << di - 1 << std::endl;
+    std::cout << dirs.length() << std::endl;
 
     file.close();
     return 0;
